@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class PathFinder : MonoBehaviour
 {
-	[SerializeField] private Transform player, target;
+	[SerializeField] private Transform player;
+	[SerializeField] private LayerMask gridMask;
+	private Vector3 targetPosition;
 
 	private Grid grid;
 
@@ -16,9 +18,19 @@ public class PathFinder : MonoBehaviour
 
 	private void Update()
 	{
-		FindPath(player.position, target.position);
-	}
+		if (Input.GetMouseButtonDown(0))
+		{
+			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+			RaycastHit hit;
 
+			if (Physics.Raycast(ray, out hit, Mathf.Infinity, gridMask))
+			{
+				targetPosition = hit.point;
+			}
+		}
+
+		FindPath(player.position, targetPosition);
+	}
 
 	private void FindPath(Vector3 startPosition, Vector3 target)
 	{
@@ -99,8 +111,5 @@ public class PathFinder : MonoBehaviour
 			Gizmos.DrawCube(player.position, Vector3.one * .9f);
 
 		Gizmos.color = Color.yellow;
-
-		if (target)
-			Gizmos.DrawCube(target.position, Vector3.one * .9f);
 	}
 }
