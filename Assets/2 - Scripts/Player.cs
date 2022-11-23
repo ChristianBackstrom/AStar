@@ -13,42 +13,43 @@ public class Player : MonoBehaviour
 	private int index = 0;
 
 
-	private void Awake()
-	{
-		StartCoroutine(UpdatePath());
-	}
 	private void Update()
 	{
 		if (!follow) return;
 		if (grid.finalPath == null) return;
 
+		UpdatePath();
+
 		if (index > 0)
 			UpdatePosition();
 	}
 
-	IEnumerator UpdatePath()
+	private void UpdatePath()
 	{
-		while (true)
+
+		if (!follow) return;
+		if (!grid.finalPath.Equals(path))
 		{
-			yield return new WaitForSeconds(1);
-			if (!follow) continue;
-			if (!grid.finalPath.Equals(path))
-			{
-				path = grid.finalPath;
-				index = path.Count - 1;
-			}
+			path = grid.finalPath;
+			path.Reverse();
+			index = path.Count - 1;
 		}
 	}
 
 
 	private void UpdatePosition()
 	{
-		if (transform.position == path[index].worldPosition)
-		{
-			index--;
-		}
+		if (!follow) return;
 
-		transform.position = Vector3.Lerp(transform.position, path[index].worldPosition, Time.deltaTime * speed);
+		if (path.Count > 0)
+		{
+			transform.position = Vector3.MoveTowards(transform.position, path[0].worldPosition, speed * Time.deltaTime);
+
+			if (transform.position == path[0].worldPosition)
+			{
+				path.RemoveAt(0);
+			}
+		}
 	}
 
 }
