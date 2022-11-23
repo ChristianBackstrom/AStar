@@ -7,7 +7,7 @@ public class Grid : MonoBehaviour
 {
 	[SerializeField] private LayerMask unwalkableMask;
 	[SerializeField] private Vector2Int gridWorldSize;
-
+	[SerializeField] private bool avoidObstacles;
 	[SerializeField] private float nodeRadius;
 	private Node[,] grid = null;
 
@@ -36,7 +36,7 @@ public class Grid : MonoBehaviour
 			for (int y = 0; y < gridWorldSize.y; y++)
 			{
 				Vector3 worldPoint = gridBottomLeft + new Vector3(x, 0, y) * nodeDiameter;
-				bool walkable = (Physics.CheckSphere(worldPoint, nodeRadius, unwalkableMask));
+				bool walkable = avoidObstacles == !(Physics.CheckSphere(worldPoint, nodeRadius, unwalkableMask));
 				grid[x, y] = new Node(walkable, worldPoint, x, y);
 			}
 		}
